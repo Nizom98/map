@@ -1,10 +1,28 @@
 package chain_hash_table
 
 import (
+	"pets/map/hash"
 	"sync"
 )
 
+const (
+	//минимально допустимый размер хеш-таблицы
+	minHashTableSize = 100
+	//минимальное значение полинома
+	minPolinom = 2
+)
+
+// NewHmap инициализация хештаблицы
+// Если hashTableSize меньше 100, то hashTableSize = 100
+// Если polinom меньше 2, то polinom = 2
 func NewHmap(polinom, hashTableSize uint) *Hmap {
+	if hashTableSize < minHashTableSize {
+		hashTableSize = minHashTableSize
+	}
+	if polinom < minPolinom {
+		polinom = minPolinom
+	}
+
 	return &Hmap{
 		bucket:        make([]*item, hashTableSize),
 		count:         0,
@@ -20,7 +38,6 @@ func (hm *Hmap) Set(key string, val []byte) {
 	defer hm.mu.Unlock()
 
 	position := hash.WithPolinom(key, hm.polinom, hm.hashTableSize)
-
 	if hm.bucket[position] == nil {
 		hm.bucket[position] = &item{
 			key: key,
