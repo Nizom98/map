@@ -1,6 +1,8 @@
 package kv_map
 
-import "sync"
+import (
+	cht "pets/map/hash-table/chain-hash-table"
+)
 
 const (
 	defaultPolinom       = 4
@@ -12,11 +14,5 @@ func NewWithDefault() Map {
 }
 
 func New(polinom, hashTableSize int) Map {
-	return &hmap{
-		bucket:        make([]*item, hashTableSize),
-		count:         0,
-		polinom:       polinom,
-		hashTableSize: hashTableSize,
-		mu:            new(sync.Mutex),
-	}
+	return cht.NewHmap(defaultPolinom, defaultHashTableSize)
 }
